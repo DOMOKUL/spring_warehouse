@@ -1,12 +1,11 @@
 package com.company.spring.controllers;
 
 import com.company.spring.dao.PersonDao;
+import com.company.spring.models.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/people")
@@ -29,5 +28,16 @@ public class PeopleController {
     public String getPersonById(@PathVariable("id") Integer id, Model model){
         model.addAttribute("person",personDao.getById(id));
         return "people/one-person";
+    }
+
+    @GetMapping("/new")
+    public String createGetPerson(@ModelAttribute("person") Person person) {
+        return "people/new-person";
+    }
+
+    @PostMapping()
+    public String createPostPerson(@ModelAttribute("person") Person person){
+        personDao.createPerson(person);
+        return "redirect:/people";
     }
 }
