@@ -2,7 +2,7 @@ package com.company.spring.models;
 
 public class Person {
 
-    private Long id;
+    private Integer id;
     private String name;
     private String surname;
     private String email;
@@ -10,14 +10,14 @@ public class Person {
     public Person() {
     }
 
-    public Person(Long id, String name, String surname, String email) {
+    public Person(Integer id, String name, String surname, String email) {
         this.id = id;
         this.name = name;
         this.surname = surname;
         this.email = email;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -33,7 +33,7 @@ public class Person {
         return email;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
