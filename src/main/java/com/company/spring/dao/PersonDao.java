@@ -1,119 +1,45 @@
 package com.company.spring.dao;
 
-import com.company.spring.dao.exception.DaoException;
 import com.company.spring.models.Person;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class PersonDao {
 
-    private static final String URL = "jdbc:postgresql://localhost:5632/postgres";
-    private static final String USERNAME = "postgres";
-    private static final String PASSWORD = "root";
+    private final JdbcTemplate jdbcTemplate;
 
-    private static Connection connection;
-
-    static {
-        try {
-            Class.forName("org.postgresql.Driver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        try {
-            var connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-        } catch (SQLException cause) {
-            cause.printStackTrace();
-        }
+    @Autowired
+    public PersonDao(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     public List<Person> getAll() {
-        try (var connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-             var preparedStatement = connection.prepareStatement("SELECT id, name, surname, age, email FROM people.person")) {
-            var resultSet = preparedStatement.executeQuery();
-            List<Person> people = new ArrayList<>();
-            while (resultSet.next()) {
-                people.add(new Person(resultSet.getInt("id"),
-                        resultSet.getString("name"),
-                        resultSet.getString("surname"),
-                        resultSet.getString("email"),
-                        resultSet.getInt("age")));
-            }
-            return people;
-        } catch (SQLException cause) {
-            throw new DaoException("No person found", cause);
-        }
+        return jdbcTemplate.query("SELECT * FROM people.person", new BeanPropertyRowMapper<>(Person.class));
     }
 
     public Person getById(Integer id) {
-        try (var connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-             var preparedStatement = connection.prepareStatement("SELECT id, name, surname, age, email FROM people.person WHERE id=?")) {
-            preparedStatement.setInt(1, id);
-            var resultSet = preparedStatement.executeQuery();
-            Person person = null;
-            if (resultSet.next()) {
-                person = new Person(resultSet.getInt("id"),
-                        resultSet.getString("name"),
-                        resultSet.getString("surname"),
-                        resultSet.getString("email"),
-                        resultSet.getInt("age"));
-            }
-            if (person == null) {
-                throw new DaoException("Course with id: " + id + " is not found");
-            }
-            return person;
-        } catch (SQLException cause) {
-            throw new DaoException("Error when accessing the database ", cause);
-        }
+        return jdbcTemplate.query("SELECT  * FROM people.person WHERE id=?", new Object[]{id}, new BeanPropertyRowMapper<>(Person.class))
+                .stream().findAny().orElse(null);
     }
 
     public Person createPerson(Person person) {
-        try (var connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-             var preparedStatement = connection.prepareStatement("INSERT INTO people.person values (?,?,?,?,?)")) {
-            preparedStatement.setInt(1, person.getId());
-            preparedStatement.setString(2, person.getName());
-            preparedStatement.setString(3, person.getSurname());
-            preparedStatement.setInt(4, person.getAge());
-            preparedStatement.setString(5, person.getEmail());
-            preparedStatement.executeUpdate();
-            return person;
-        } catch (SQLException cause) {
-            throw new DaoException("Error when accessing the database ", cause);
-        }
+        jdbcTemplate.update("INSERT INTO people.person values (?,?,?,?)", person.getName(),person.getSurname(), person.getAge(), person.getEmail());
+        return person;
     }
 
     public Person updatePerson(Person person) {
-        try (var connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-             var preparedStatement = connection.prepareStatement("UPDATE people.person SET id=?, name=?, surname=?, email=?, age=? WHERE id=?")) {
-            preparedStatement.setInt(1, person.getId());
-            preparedStatement.setString(2, person.getName());
-            preparedStatement.setString(3, person.getSurname());
-            preparedStatement.setString(4, person.getEmail());
-            preparedStatement.setInt(5, person.getAge());
-            preparedStatement.setInt(6, person.getId());
-            var recordCount = preparedStatement.executeUpdate();
-            if (recordCount != 0) {
-                return person;
-            }
-            throw new DaoException("Person with id: " + person.getId() + " is not found");
-        } catch (SQLException cause) {
-            throw new DaoException("Error when accessing the database ", cause);
-        }
+        jdbcTemplate.update("UPDATE people.person SET name=?, surname=?, age=?, email=? WHERE id=?",
+                person.getName(),person.getSurname(),person.getAge(),person.getEmail(), person.getId());
+        return person;
     }
 
     public void deletePerson(Integer peopleId) {
-        try (var connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-             var preparedStatement = connection.prepareStatement("DELETE FROM people.person WHERE id=?")) {
-            preparedStatement.setInt(1, peopleId);
-            preparedStatement.executeUpdate();
-        } catch (SQLException cause) {
-            throw new DaoException("Error when accessing the database ", cause);
-        }
+        jdbcTemplate.update("DELETE FROM people.person WHERE id=?", peopleId);
     }
 }
 
