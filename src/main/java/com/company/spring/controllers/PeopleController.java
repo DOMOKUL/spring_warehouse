@@ -22,7 +22,7 @@ public class PeopleController {
     }
 
     @GetMapping()
-    public String getAllPeople(Model model) {
+    public String getAllPeople(Model model){
         model.addAttribute("people", personDao.getAll());
         return "people/all-people";
     }
@@ -55,12 +55,11 @@ public class PeopleController {
     }
 
     @PatchMapping("/{id}")
-    public String updatePerson(@ModelAttribute("person") @Valid Person person, BindingResult bindingResult,
-                               @PathVariable("id") Integer id) {
+    public String updatePerson(@ModelAttribute("person") @Valid Person person, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "people/edit-person";
         }
-        personDao.updatePerson(id, person);
+        personDao.updatePerson(person);
         return "redirect:/people";
     }
 
