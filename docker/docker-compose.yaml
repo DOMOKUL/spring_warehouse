@@ -1,0 +1,16 @@
+# Use postgres/example user/password credentials
+version: '3.9'
+
+volumes:
+  postgres_data:
+    driver: local
+
+services:
+  postgres:
+    image: postgres:13.3
+    environment:
+      POSTGRES_DB: "habrdb"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "root"
+    ports:
+      - "5632:5432"
