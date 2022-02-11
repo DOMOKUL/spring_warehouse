@@ -22,7 +22,7 @@ public class PeopleController {
     }
 
     @GetMapping()
-    public String getAllPeople(Model model){
+    public String getAllPeople(Model model) {
         model.addAttribute("people", personDao.getAll());
         return "people/all-people";
     }

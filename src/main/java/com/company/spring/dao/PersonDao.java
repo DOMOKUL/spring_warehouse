@@ -28,13 +28,13 @@ public class PersonDao {
     }
 
     public Person createPerson(Person person) {
-        jdbcTemplate.update("INSERT INTO people.person values (DEFAULT,?,?,?,?)", person.getName(),person.getSurname(), person.getAge(), person.getEmail());
+        jdbcTemplate.update("INSERT INTO people.person values (DEFAULT,?,?,?,?)", person.getName(), person.getSurname(), person.getAge(), person.getEmail());
         return person;
     }
 
     public Person updatePerson(Person person) {
         jdbcTemplate.update("UPDATE people.person SET name=?, surname=?, age=?, email=? WHERE id=?",
-                person.getName(),person.getSurname(),person.getAge(),person.getEmail(), person.getId());
+                person.getName(), person.getSurname(), person.getAge(), person.getEmail(), person.getId());
         return person;
     }
 
