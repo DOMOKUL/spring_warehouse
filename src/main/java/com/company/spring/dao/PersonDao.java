@@ -10,15 +10,15 @@ import java.util.List;
 public class PersonDao {
 
     private static int PEOPLE_COUNT;
-    private List<Person> people;
+    private final List<Person> people;
 
     {
         people = new ArrayList<>();
 
-        people.add(new Person(++PEOPLE_COUNT, "Tom","Ivanov","posa1@mail.ru"));
-        people.add(new Person(++PEOPLE_COUNT, "Bob","Petrov", "posa2@mail.ru"));
-        people.add(new Person(++PEOPLE_COUNT, "Mike","Sidorov", "posf@mail.ru"));
-        people.add(new Person(++PEOPLE_COUNT, "Katy", "Katuea", "21sae@mail.ru"));
+        people.add(new Person(++PEOPLE_COUNT, "Tom", "Ivanov", "posa1@mail.ru", 24));
+        people.add(new Person(++PEOPLE_COUNT, "Bob", "Petrov", "posa2@mail.ru", 22));
+        people.add(new Person(++PEOPLE_COUNT, "Mike", "Sidorov", "posf@mail.ru", 12));
+        people.add(new Person(++PEOPLE_COUNT, "Katy", "Katuea", "21sae@mail.ru", 15));
     }
 
     public List<Person> getAll() {
@@ -40,6 +40,7 @@ public class PersonDao {
         personToBeUpdated.setName(updatedPerson.getName());
         personToBeUpdated.setSurname(updatedPerson.getSurname());
         personToBeUpdated.setEmail(updatedPerson.getEmail());
+        personToBeUpdated.setAge(updatedPerson.getAge());
     }
 
     public void deletePerson(Integer id) {
